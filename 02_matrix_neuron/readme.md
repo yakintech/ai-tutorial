@@ -167,22 +167,7 @@ y = max(0, 0.95) = 0.95
 - **Paralelleştirme**: GPU'larda hızlı hesaplama
 - **Boyut İndirme/Artırma**: Özellik dönüşümü
 
-## 🔧 Kurulum ve Çalıştırma
 
-### Gereksinimler
-```bash
-pip install numpy
-```
-
-### Temel Nöron Testi
-```bash
-python main.py
-```
-
-### Kahve Örneği
-```bash
-python coffee_example.py
-```
 
 ## 📊 Matrix Boyutları
 
