@@ -97,17 +97,7 @@ Kosinüs benzerliği şu alanlarda yaygın olarak kullanılır:
 - **Bilgisayarlı Görü**: Görüntü özellik vektörleri
 - **Doğal Dil İşleme**: Kelime vektörleri (word embeddings)
 
-## Kurulum ve Çalıştırma
 
-### Gereksinimler
-```bash
-pip install numpy
-```
-
-### Çalıştırma
-```bash
-python main.py
-```
 
 ## Avantajlar
 
@@ -116,6 +106,3 @@ python main.py
 3. **Hesaplama Verimliliği**: Nispeten hızlı hesaplanabilir
 4. **Geometrik Anlam**: Açı kavramıyla doğrudan ilişkili
 
-## Not
-
-Bu implementasyon, sıfır vektörler için güvenlik kontrolü içermektedir. Eğer herhangi bir vektörün büyüklüğü sıfırsa, fonksiyon 0.0 değeri döndürür.
