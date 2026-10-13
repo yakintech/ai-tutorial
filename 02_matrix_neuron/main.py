@@ -15,9 +15,11 @@ def relu(x: np.ndarray) -> np.ndarray:
     return np.maximum(0, x)
 
 if __name__ == "__main__":
-    # Örnek: 2 girişli, 2 çıkışlı basit bir nöron
-    W = np.array([[0.2, 0.8],
-                  [0.5, -0.3]], dtype=float)
+    # Örnek: 2 girişli, 2 çıkışlı basit bir katman (2 nöron)
+    # İkinci nöronun ağırlıkları negatif sonuç üretecek şekilde seçildi,
+    # böylece ReLU'nun ne yaptığı çıktıda görünüyor.
+    W = np.array([[0.2,  0.8],
+                  [0.5, -0.8]], dtype=float)
 
     x = np.array([[1.0],
                   [2.0]], dtype=float)
@@ -29,8 +31,12 @@ if __name__ == "__main__":
     y_linear = forward(W, x, b)
     print("Doğrusal çıktı (Wx + b):")
     print(y_linear)
+    # [[ 1.9]   -> 0.2*1 + 0.8*2 + 0.1
+    #  [-0.9]]  -> 0.5*1 - 0.8*2 + 0.2
 
     # 2. Aşama: Aktivasyon fonksiyonu (ReLU)
     y_relu = relu(y_linear)
     print("ReLU sonrası çıktı:")
     print(y_relu)
+    # [[1.9]
+    #  [0. ]]  -> negatif olan nöron "sustu"
