@@ -39,6 +39,59 @@ toplam etki = 3×0.7 + 5×0.3 + 9×0.1 = 2.1 + 1.5 + 0.9 = 4.5
 
 Bu aslında bir **nokta çarpımı (dot product)** işlemidir.
 
+## 🏠 Gerçek Hayattan Örnek: Ev Almak (`home_sample.py`)
+
+İstanbul'da bir ev bakıyoruz. Üç özellik: **metrekare, oda sayısı, merkeze uzaklık**.
+
+| Özellik          | Değer | Ağırlık |
+|------------------|-------|---------|
+| Metrekare        | 120   | 0.6     |
+| Oda sayısı       | 3     | 0.3     |
+| Merkeze uzaklık  | 8 km  | **-0.2**|
+
+Uzaklığın ağırlığı **eksi**: uzaklık arttıkça değer düşüyor. Bir ağırlığın en güçlü tarafı büyüklüğü değil, işareti.
+
+Bias = 100: "şehrin ortalama ev fiyatı 100 bin civarındadır" bilgisi. Özellikler sıfır olsa bile modelin söyleyeceği taban değer.
+
+```
+y = 0.6×120 + 0.3×3 + (-0.2)×8 + 100
+  = 72 + 0.9 - 1.6 + 100
+  = 171.30 bin
+```
+
+Aynı ev **900 km** uzakta olsaydı:
+
+```
+y = 72 + 0.9 - 180 + 100 = -7.10   →   ReLU   →   0
+```
+
+Eksi fiyat olmaz; ReLU negatifi sıfıra çeker. "İlgilenmiyorsan hiç konuşma."
+
+> Not: Bu örnekte veriler kasıtlı olarak normalize edilmemiştir (120, 3, 8 ham değerler). Sade olsun diye. Gerçek modellerde özellikler aynı ölçeğe çekilir; kahve örneğinde bunu yapıyoruz.
+
+## 📦 Tek Karardan Yüzlerce Karara (`batch_example.py`)
+
+Beş yüz ev için fiyat tahmin etmek gerekse ne değişir? **Hiçbir şey.** `x` bir sütun olmaktan çıkıp bir tablo (matris) olur, her sütun bir ev:
+
+```
+            ev1  ev2  ev3  ev4
+X = [[120,  80, 200,  60],    # metrekare
+     [  3,   2,   5,   1],    # oda
+     [  8,   2,  30, 450]]    # uzaklık
+```
+
+```
+Y = W · X + b     (1,3) · (3,4) + (1,1)  →  (1,4)
+```
+
+Tek `np.dot` çağrısı, dört fiyat:
+
+```
+ev1: 171.30   ev2: 148.20   ev3: 215.50   ev4: 46.30
+```
+
+500 ev için `X`'e 496 sütun daha eklenir, kod değişmez. Ekran kartlarının yapay zekayla bu kadar iyi anlaşmasının sebebi bu: her şey tek bir çarp-topla işlemine iniyor ve bu işlem paralel yapılabiliyor.
+
 ## 🔢 Matematiksel Temel
 
 ### Nöron Formülü
@@ -106,7 +159,15 @@ ReLU aktivasyon fonksiyonu:
 - Negatif değerler → 0
 - Pozitif değerler → değişmez
 
-### `coffee_example.py` - Kahve Örneği
+### `home_sample.py` - Ev Örneği
+
+Normalize edilmemiş ham verilerle tek nöron. Önce normal bir ev, sonra çok uzak bir ev ile ReLU'nun negatifi sıfırladığı gösterilir.
+
+### `batch_example.py` - Toplu Hesap
+
+Aynı `W` ve `b` ile 4 evin fiyatını tek matris çarpımında hesaplar.
+
+### `coffe_example.py` - Kahve Örneği
 
 #### Özelleştirilmiş Nöron
 ```python
@@ -152,6 +213,16 @@ y = max(0, 0.95) = 0.95
 - **0 yakını** → Düşük skor, kahve almayı düşün
 - **Negatif → 0** → ReLU sayesinde, kesinlikle almama
 
+## ▶️ Çalıştırma
+
+```bash
+pip install numpy
+python main.py           # 2 nöronlu küçük katman, ReLU'nun negatifi susturması
+python home_sample.py    # ev örneği
+python batch_example.py  # 4 ev tek seferde
+python coffe_example.py  # kahve örneği (normalize edilmiş girdi)
+```
+
 ## 🚀 Kullanım Alanları
 
 ### Yapay Sinir Ağlarında Nöronlar
@@ -179,7 +250,23 @@ b: (2, 1) - 2 bias
 y: (2, 1) - 2 sonuç
 ```
 
-### coffee_example.py Örneği
+### home_sample.py Örneği
+```
+W: (1, 3) - 3 giriş, 1 çıkış
+x: (3, 1) - 3 özellik
+b: (1, 1) - 1 bias
+y: (1, 1) - 1 fiyat tahmini
+```
+
+### batch_example.py Örneği
+```
+W: (1, 3) - 3 giriş, 1 çıkış
+X: (3, 4) - 3 özellik, 4 ev (her sütun bir ev)
+b: (1, 1) - 1 bias (her sütuna yayınlanır / broadcast)
+Y: (1, 4) - 4 fiyat tahmini
+```
+
+### coffe_example.py Örneği
 ```
 W: (1, 3) - 3 giriş, 1 çıkış  
 x: (3, 1) - 3 özellik
